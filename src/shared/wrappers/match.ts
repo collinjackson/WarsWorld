@@ -7,9 +7,13 @@ import { getDistance, isSamePosition } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
-import type { ChangeableTile, PlayerInMatch } from "shared/types/server-match-state";
+import {
+  createNeutralPlayerInMatch,
+  type ChangeableTile,
+  type PlayerInMatch,
+} from "shared/types/server-match-state";
 import { MapWrapper } from "./map";
-import type { PlayerInMatchWrapper } from "./player-in-match";
+import { PlayerInMatchWrapper } from "./player-in-match";
 import { TeamWrapper } from "./team";
 import type { UnitWrapper } from "./unit";
 import { Vision } from "./vision";
@@ -34,6 +38,7 @@ export class MatchWrapper<
   public playerToRemoveWeatherEffect: PlayerInMatchWrapper | null = null;
   public weatherDaysLeft = 0;
   public teams: TeamWrapper[] = [];
+  private neutralPlayer: PlayerInMatchWrapper;
   /**
    * TODO
    *
@@ -58,6 +63,9 @@ export class MatchWrapper<
     this.map = new MapWrapper(map);
     players.forEach((player) => this.addUnwrappedPlayer(player));
     this.units = units.map((unit) => new UnitWrapperClass(unit, this));
+    const neutralPlayerInMatch = createNeutralPlayerInMatch();
+    const neutralTeam = new TeamWrapper([neutralPlayerInMatch], this, -1);
+    this.neutralPlayer = new PlayerInMatchWrapper(neutralPlayerInMatch, neutralTeam);
   }
 
   isFogOfWar(): boolean {
@@ -137,6 +145,10 @@ export class MatchWrapper<
   }
 
   getPlayerBySlot(playerSlot: PlayerSlot) {
+    if (playerSlot < 0) {
+      return this.neutralPlayer;
+    }
+
     return this.getAllPlayers().find((p) => p.data.slot === playerSlot);
   }
 

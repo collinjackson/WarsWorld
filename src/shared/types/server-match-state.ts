@@ -42,3 +42,20 @@ export type PlayerInMatch = {
   army: Army;
   COPowerState: COPowerState;
 };
+
+export const createNeutralPlayerInMatch: () => PlayerInMatch = () => {
+  return {
+    slot: -1,
+    hasCurrentTurn: false,
+    id: "Neutral",
+    name: "Neutral",
+    ready: true,
+    coId: { name: "adder", version: "AW2" },
+    status: "alive",
+    funds: 0,
+    powerMeter: 0,
+    timesPowerUsed: 0,
+    army: "black-hole",
+    COPowerState: "no-power",
+  };
+};
