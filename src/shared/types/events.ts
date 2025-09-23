@@ -126,7 +126,6 @@ export type SubEvent =
 
 type WithDiscoveries = {
   discoveredUnits?: WWUnit[];
-  // TODO we need to add pipeseams to update their HP / destruction state upon discovery
   discoveredProperties?: CapturableTile[];
 };
 
