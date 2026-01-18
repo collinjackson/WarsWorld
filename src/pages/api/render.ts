@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { renderStates } from "../../server/render/renderGif";
 import { sampleStates } from "../../server/render/sample";
 import type { RenderState } from "../../server/render/types";
+import { storeGif } from "../../server/render/storeGif";
 
 type RenderRequest = {
   states: RenderState[];
@@ -36,8 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
     const gif = await renderStates(payload.states);
-    res.setHeader("Content-Type", "image/gif");
-    res.send(gif);
+    const stored = await storeGif(gif, 15);
+    res.status(200).json({
+      url: stored.url,
+      expiresAt: stored.expiresAt,
+      path: stored.path,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "render failed" });
