@@ -37,7 +37,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
     const gif = await renderStates(payload.states);
-    const stored = await storeGif(gif, 15);
+    // Default TTL is 3 days; override by passing minutes as second arg if needed.
+    const stored = await storeGif(gif);
     res.status(200).json({
       url: stored.url,
       expiresAt: stored.expiresAt,

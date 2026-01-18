@@ -10,7 +10,12 @@ export interface StoredGif {
   path: string;
 }
 
-export async function storeGif(buffer: Buffer, ttlMinutes = 15): Promise<StoredGif> {
+const DEFAULT_TTL_MINUTES = 60 * 24 * 3; // 3 days
+
+export async function storeGif(
+  buffer: Buffer,
+  ttlMinutes: number = DEFAULT_TTL_MINUTES
+): Promise<StoredGif> {
   if (!bucketName) {
     throw new Error("RENDER_BUCKET env var is required for storing renders");
   }
