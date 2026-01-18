@@ -11,11 +11,21 @@ type RenderRequest = {
   states: RenderState[];
 };
 
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "https://collinjackson.github.io",
+  "https://collinjackson.github.io/zk-wars",
+];
+
 export const render = functions
   .region("us-central1")
   .runWith({ memory: "1GB", timeoutSeconds: 120 })
   .https.onRequest(async (req, res) => {
-    res.set("Access-Control-Allow-Origin", "*");
+    const origin = req.headers.origin;
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+      res.set("Access-Control-Allow-Origin", origin);
+    }
+    res.set("Vary", "Origin");
     res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
     res.set("Access-Control-Allow-Headers", "Content-Type");
     if (req.method === "OPTIONS") {
